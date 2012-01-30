@@ -1,26 +1,43 @@
 <!DOCTYPE HTML>
-<html>
+<html xmlns:ng="http://angularjs.org" xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" xmlns:og="http://ogp.me/ns#" xmlns:fb="https://www.facebook.com/2008/fbml">
 <!-- Source is http://demo.spreecommerce.com/cart -->
-<head data-hook="inside_head">
+<head>
 <title>Rails Dog Radio - Shopping Cart</title>
+<script src="http://code.angularjs.org/0.9.19/angular-0.9.19.min.js" ng:autobind></script>
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
 <meta content="spree, demo" name="keywords" />
 <meta content="Spree demo site" name="description" />
 <link href="index_files/all-ee2668f497fb808d0043edc1740cea1f.css" media="screen" rel="stylesheet" type="text/css" />
 <link href="index_files/css" rel="stylesheet" type="text/css">
-<meta content="authenticity_token" name="csrf-param" />
-<meta content="xotITlobeVi6BUnqBIqAd4eFy5+yJf0JlSyog8rK5hQ=" name="csrf-token" />
-<script src="index_files/all-33d8e8883f933a9a4342dffdf9686183.js" type="text/javascript"></script>
-<script type="text/javascript">
-    var jirafe= {"cart":{"total":"189.98","products":[{"name":"Grace Wireless Internet Radio","price":"179.99","qty":1,"sku":"GDI-IR2000","categories":["categories/sirius-radios/sirius-home","categories/internet-and-other-radios"]},{"name":"Plantronics M40 Mobile in Ear Headset","price":"9.99","qty":1,"sku":"PLAM40","categories":["categories/headphones"]}]},"id":"25861","baseUrl":"data.jirafe.com"};
-    (function(){
-    var d=document,g=d.createElement('script'),s=d.getElementsByTagName('script')[0];
-    g.type='text/javascript',g.defer=g.async=true;g.src=d.location.protocol+'//c.jirafe.com/jirafe.js';
-    s.parentNode.insertBefore(g, s);
-    })();
-  </script>
+<script>
+     function MyController() {
+         var scope = this;
+         scope.cart = {
+	         authenticity_token: "xotITlobeVi6BUnqBIqAd4eFy5+yJf0JlSyog8rK5hQ=",
+             items: [ 
+                 { 
+	                 imgSrc: "index_files/grace-wireless-player.jpg",
+		             link: "grace-wireless-internet-radio",
+		             name: "Grace Wireless Internet Radio",
+		             price: 179.99,
+		             qty: 1
+                 },
+                 { 
+	                 imgSrc: "index_files/plantronics-headphone.jpg",
+		             link: "plantronics-m40-mobile-in-ear-headset",
+		             name: "Plantronics M40 Mobile in Ear Headset",
+		             price: 9.99,
+		             qty: 2
+                 }
+             ]
+         };
+         scope.todo = function() {
+	       alert("this functionality yet to do...")	
+         };
+     }
+</script>
 </head>
-<body id="cart">
+<body id="cart" ng:controller="MyController">
 <div id="container">
   <header><a href="http://demo.spreecommerce.com/"><img alt="Rails Dog Radio" height="58" id="logo" src="index_files/logo-6723c307b71dadcde60ba81f6e2f6858.png" width="300" /></a>
     <form action="#">
@@ -35,17 +52,11 @@
   </header>
   <div id="main" role="main">
     <h1>Shopping Cart</h1>
-    <form accept-charset="UTF-8" action="/cart" class="edit_order" id="updatecart" method="post">
-      <div style="margin:0;padding:0;display:inline">
-        <input name="utf8" type="hidden" value="&#x2713;" />
-        <input name="_method" type="hidden" value="put" />
-        <input name="authenticity_token" type="hidden" value="xotITlobeVi6BUnqBIqAd4eFy5+yJf0JlSyog8rK5hQ=" />
-      </div>
-      <h3>You have 2 items in your cart</h3>
-      <div data-hook="cart_items">
-        <table id="cart-detail" data-hook>
+      <h3>You have {{cart.items.length}} items in your cart</h3>
+      <div>
+        <table id="cart-detail">
           <thead>
-            <tr data-hook="cart_items_headers">
+            <tr>
               <th colspan="2">Item</th>
               <th>Price</th>
               <th> </th>
@@ -55,48 +66,30 @@
               <th> </th>
             </tr>
           </thead>
-          <tbody id="line_items" data-hook>
-            <tr class="">
-              <td data-hook="cart_item_image"><img alt="Grace Wireless Internet Radio" src="index_files/grace-wireless-player.jpg" /></td>
-              <td class="description" data-hook="cart_item_description"><h4><a href="http://demo.spreecommerce.com/products/grace-wireless-internet-radio">Grace Wireless Internet Radio</a></h4></td>
-              <td class="unit-price" data-hook="cart_item_price"> $179.99 </td>
+          <tbody id="line_items">
+            <tr ng:repeat="item in cart.items" class="">
+              <td><img alt="{{item.name}}" ng:src="{{item.imgSrc}}" /></td>
+              <td class="description"><h4><a href="http://demo.spreecommerce.com/products/{{item.link}}">{{item.name}}</a></h4></td>
+              <td class="unit-price"> {{item.price | currency}} </td>
               <td class="operator"> X </td>
-              <td class="quantity" data-hook="cart_item_quantity"><input class="line_item_quantity" id="order_line_items_attributes_0_quantity" name="order[line_items_attributes][0][quantity]" size="3" type="text" value="1" /></td>
+              <td class="quantity"><input style="width: 32px;" name="item.qty" ng:validate="integer:1:5" /></td>
               <td class="operator"> = </td>
-              <td class="total" data-hook="cart_item_total"> $179.99 </td>
-              <td class="total" data-hook="cart_item_delete"><a href="http://demo.spreecommerce.com/cart#" class="delete button">Remove</a></td>
+              <td class="total"> {{item.price*item.qty | currency}} </td>
+              <td class="total"><a ng:click="cart.items.$remove(item)" class="delete button">Remove</a></td>
             </tr>
-          <input id="order_line_items_attributes_0_id" name="order[line_items_attributes][0][id]" type="hidden" value="21811" />
-          <tr class="alt">
-            <td data-hook="cart_item_image"><img alt="Plantronics M40 Mobile in Ear Headset" src="index_files/plantronics-headphone.jpg" /></td>
-            <td class="description" data-hook="cart_item_description"><h4><a href="http://demo.spreecommerce.com/products/plantronics-m40-mobile-in-ear-headset">Plantronics M40 Mobile in Ear Headset</a></h4></td>
-            <td class="unit-price" data-hook="cart_item_price"> $9.99 </td>
-            <td class="operator"> X </td>
-            <td class="quantity" data-hook="cart_item_quantity"><input class="line_item_quantity" id="order_line_items_attributes_1_quantity" name="order[line_items_attributes][1][quantity]" size="3" type="text" value="1" /></td>
-            <td class="operator"> = </td>
-            <td class="total" data-hook="cart_item_total"> $9.99 </td>
-            <td class="total" data-hook="cart_item_delete"><a href="http://demo.spreecommerce.com/cart#" class="delete button">Remove</a></td>
-          </tr>
-          <input id="order_line_items_attributes_1_id" name="order[line_items_attributes][1][id]" type="hidden" value="21812" />
-          <tr class="actions">
-            <td colspan="4"> </td>
-            <td colspan="2"><button type="submit" class="update">Update</button></td>
-            <td colspan="2"> </td>
-          </tr>
           <tr class="totals">
             <td colspan="6"> </td>
-            <td colspan="2" class="totals"> Subtotal: $189.98 </td>
+            <td colspan="2" class="totals"> Subtotal: {{cart.items.$sum('price*qty') | currency}} </td>
           </tr>
             </tbody>
           
         </table>
       </div>
-      <p class="actions"> <a href="http://demo.spreecommerce.com/products" class="continue">Continue shopping</a>  
-        or   <a href="http://demo.spreecommerce.com/checkout" class="button checkout">Checkout</a> </p>
-    </form>
+      <p class="actions"> <a ng:click="todo()" class="continue">Continue shopping</a>  
+        or   <a ng:click="todo()" class="button checkout">Checkout</a> </p>
   </div>
 </div>
-<footer data-hook="footer">
+<footer>
   <div class="inner"> <img alt="RailsDog Radio Kid" height="413" id="kid" src="index_files/kid-90930e9a5cf7f0ce4be59b04bda5d5a7.jpg" width="204" />
     <div id="about-railsdog-radio">
       <div>
